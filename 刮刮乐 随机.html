@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		div{
+			width: 200px;
+			height: 100px;
+			border: 1px solid black;
+			font-size: 30px;
+			text-align: center;
+			line-height: 100px;
+
+			position: relative;
+		}
+		canvas{
+			position: absolute;
+			left: 0;
+			top: 0;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<span id="span"></span>
+		<canvas id="canvas" width="200" height="100"></canvas>
+	</div>
+</body>
+<script type="text/javascript">
+	var span = document.getElementById("span");
+	var canvas = document.getElementById("canvas");
+	var context = canvas.getContext("2d");
+
+	var rndNum=0;
+
+	var randomArr=["特等奖","一等奖","二等奖","三等奖","谢谢惠顾"]
+
+	function rndFn(min,max){
+		var rndNumber=parseInt(4*Math.random()*(max-min))+min
+		if(rndNumber>randomArr.length-1){
+			rndNumber=randomArr.length-1;
+		}
+		return rndNumber;
+	}
+	rndNum=rndFn(0,randomArr.length);
+	console.log(rndNum);
+	span.innerText=randomArr[rndNum];
+	// 绘制灰色的刮层
+	context.beginPath();
+	// 填充颜色
+	context.fillStyle = "gray";
+	// 矩形
+	context.rect(0,0,canvas.width,canvas.height);
+	// 进行填充
+	context.fill();
+	context.closePath();
+
+	// 设置图形组合类型
+	context.globalCompositeOperation = "destination-out"; 
+
+	// 事件
+	canvas.onmousedown = function(e){
+		var e = e || window.event;
+		// 得到div的offsetLeft和offsetTop
+		var divL = canvas.parentNode.offsetLeft;
+		var divT = canvas.parentNode.offsetTop;
+		// 得到鼠标按下的坐标
+		var mouseDownX = e.clientX;
+		var mouseDownY = e.clientY;
+
+		// 开始路径
+		context.beginPath();
+		
+		// 鼠标移动事件
+		canvas.onmousemove = function(e){
+			// 获得鼠标移动时的坐标
+			var mouseMoveX  = e.clientX;
+			var mouseMoveY = e.clientY;
+			context.moveTo(mouseDownX - divL, mouseDownY - divT);
+			// 绘制圆形
+			context.arc(mouseMoveX - divL, mouseMoveY - divT, 10, 0, Math.PI*2);
+			// 填充
+			context.fill();
+		}
+	}
+
+	// 鼠标松开
+	canvas.onmouseup = function(){
+		canvas.onmousemove = null;
+	}
+</script>
+</html>
